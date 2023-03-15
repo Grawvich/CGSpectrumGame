@@ -29,6 +29,7 @@ constexpr int kRightArrow = 77; // Extended ASCII character
 constexpr int kUpArrow = 72; // Extended ASCII character
 constexpr int kDownArrow = 80; // Extended ASCII character
 constexpr int kEscape = 27; // Extended ASCII character
+constexpr int kBackspace = 8; // Extended ASCII character
 
 
 // ------DECLARATIONS of FUNCTIONS ---------
@@ -51,6 +52,9 @@ void DisplayRightBorder();
 bool EditLevel(char* pLevel, int& cursorX, int& cursorY, int width, int height);
 // function to SaveLevel
 void SaveLevel(char* pLevel, int width, int height);
+
+//display legend so its easier for the user
+void DisplayLegend();
 
 int main()
 {
@@ -78,6 +82,7 @@ int main()
 		system("cls"); // clear screen
 		// displaylevel to terminal
 		DisplayLevel(pLevel, levelWidth, levelHeight, cursorX, cursorY);
+		void DisplayLegend();
 		doneEditing = EditLevel(pLevel, cursorX, cursorY, levelWidth, levelHeight);
 	}
 
@@ -94,6 +99,22 @@ int main()
 
 
 // -------- DEFINITIONS -------
+
+void DisplayLegend()
+{
+	cout << "Arrows to move cursor" << endl;
+	cout << "ESC to finish editing" << endl;
+	cout << "+ | -  for the walls" << endl;
+	cout << "@ for player " << endl;
+	cout << "r g b for key" << endl;
+	cout << "R G B for door" << endl;
+	cout << "$ for money" << endl;
+	cout << "v for vertical moving enemy" << endl;
+	cout << "h for horizontal moving enemy" << endl;
+	cout << "e for non-moving enemy" << endl;
+	cout << "X for goal" << endl;
+}
+
 
 // function to get level dimensions
 void GetLevelDimensions(int& width, int& height) // reference variableswidth & height. WE could have passed it in by POINTER VARIABLE too.
@@ -216,10 +237,10 @@ bool EditLevel(char* pLevel, int& cursorX, int& cursorY, int width, int height)
 	int newCursorY = cursorY;
 
 	// get input
-	int intInteger = _getch();
+	int intInput = _getch();
 
 	// if key arrow input
-	if (intInteger == kArrowInput)
+	if (intInput == kArrowInput)
 	{
 		// so that the compiler reads the exact arrow that was pressed.
 		int arrowInput = _getch();
@@ -260,9 +281,13 @@ bool EditLevel(char* pLevel, int& cursorX, int& cursorY, int width, int height)
 	// if ESC key input
 	else
 	{
-		if (intInteger == kEscape)
+		if (intInput == kEscape)
 		{
 			return true; // means we are done editing this level, returning bool editLevel to true.
+		}
+		else if (intInput == kBackspace)
+		{
+			//ignore
 		}
 		else
 		{

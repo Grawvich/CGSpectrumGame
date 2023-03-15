@@ -1,31 +1,32 @@
 #pragma once
-#include "Point.h"
+#include "PlaceableActor.h"
 
+class Key; // forward class declaration
 
-class Player
+class Player : public PlaceableActor
 {
-	// private member variables
-	Point m_position;
-	bool m_hasKey;
-
 public:
 	Player();
-	~Player();
-
-	int GetXPosition() { return m_position.x; }
-	int GetYPosition() { return m_position.y; }
-
-	// for Level.cpp, allowing Load function to pointer to player X & Y
-	int* GetXPositionPointer() { return &(m_position.x); }
-	int* GetYPositionPointer() { return &(m_position.y); }
-
-	void SetPosition(int x, int y);
-
+	
 	// member functions
 	bool hasKey();
-	void PickUpKey();
+	bool hasKey(int color);
+	void PickUpKey(Key* key);
 	void UseKey();
-	void Draw();
+	void DropKey();
+
+	void AddMoney(int money) { m_money += money; }
+	int GetMoney() { return m_money; }
+
+	int GetLives() { return m_lives; }
+	void DecrementLives() { m_lives--; } 
+
+	virtual void Draw() override;
+	
+private:
+	Key* m_pCurrentKey; // Aggregation because we can hold the key, AND it still exists
+	int m_money;
+	int m_lives;
 
 
 };
