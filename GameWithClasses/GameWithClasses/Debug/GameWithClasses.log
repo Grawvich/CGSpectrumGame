@@ -1,6 +1,4 @@
 ﻿  Game.cpp
-C:\Visual Studio (Blue emblem) Projects\Week08\GameWithClasses\GameWithClasses\Game.cpp(99,69): warning C4553: '==': result of expression not used; did you intend '='?
-  Level.cpp
   Player.cpp
   Generating Code...
-  GameWithClasses.vcxproj -> C:\Visual Studio (Blue emblem) Projects\Week08\GameWithClasses\Debug\GameWithClasses.exe
+  GameWithClasses.vcxproj -> E:\project home\GitHub\CGSpectrumGame\GameWithClasses\Debug\GameWithClasses.exe

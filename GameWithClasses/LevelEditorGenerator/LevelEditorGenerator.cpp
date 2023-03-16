@@ -293,7 +293,7 @@ bool EditLevel(char* pLevel, int& cursorX, int& cursorY, int width, int height)
 		{
 			// store the key in the map that was pressed because our player is pressing the arrow keys
 			int index = GetIndexFromXY(newCursorX, newCursorY, width);
-			pLevel[index] = (char)intInteger;
+			pLevel[index] = (char)intInput;
 		}
 	}
 	return false; // terminate loop

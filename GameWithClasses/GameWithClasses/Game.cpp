@@ -144,7 +144,7 @@ bool Game::HandleCollision(int newPlayerX, int newPlayerY)
         }
 
         // if collidedActor is Key, create pointer variable of Type Key to store
-        Key* collidedKey = dynamic_cast<Key*>(collidedKey);
+        Key* collidedKey = dynamic_cast<Key*>(collidedActor);
         if (collidedKey)
         {
             m_player.PickUpKey(collidedKey);

@@ -5,9 +5,11 @@
 #include "Game.h"
 
 using namespace std;
+
 int main()
 {
     Game myGame;
+
     // load game
     if (myGame.Load())
     {
@@ -16,8 +18,20 @@ int main()
             myGame.Run();
         }
 
-        cout << "We Won!!!!" << endl;
-        // Play win sound PlayWinSound();
+        if (myGame.DidUserQuit())
+        {
+            cout << "Thanks for Playing!!!" << endl;
+        }
+        else if (myGame.GetPlayerLives() < 0)
+        {
+            cout << "You Lose!!" << endl;
+            // Play Lose sound
+        }
+        else 
+        {
+            cout << "!!!!You Win!!!!" << endl;
+            // Play Lose sound
+        }
     }
     else
     {
