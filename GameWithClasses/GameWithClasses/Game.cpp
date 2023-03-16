@@ -33,7 +33,7 @@ Game::~Game()
 
 bool Game::Load()
 {
-	return m_level.Load("Level1.txt", m_player.GetXPositionPointer(), m_player.GetYPositionPointer());
+	return m_level.Load("Level2.txt", m_player.GetXPositionPointer(), m_player.GetYPositionPointer());
 }
 
 void Game::Run()
@@ -88,7 +88,7 @@ bool Game::Update()
     else if ((input == kArrowInput && arrowInput == kDownArrow) ||
         (char)input == 'S' || (char)input == 's')
     {
-        newPlayerY--;           // move player Down
+        newPlayerY++;           // move player Down
     }
     else if (input == kEscapeKey)
     {
@@ -186,6 +186,7 @@ bool Game::HandleCollision(int newPlayerX, int newPlayerY)
 
         }
     } // end of collision with  actors
+
     else if (m_level.IsSpace(newPlayerX, newPlayerY)) // no collision, or empty space
     {
         m_player.SetPosition(newPlayerX, newPlayerY); // then update player position to empty space

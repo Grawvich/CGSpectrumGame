@@ -82,7 +82,7 @@ int main()
 		system("cls"); // clear screen
 		// displaylevel to terminal
 		DisplayLevel(pLevel, levelWidth, levelHeight, cursorX, cursorY);
-		void DisplayLegend();
+		DisplayLegend();
 		doneEditing = EditLevel(pLevel, cursorX, cursorY, levelWidth, levelHeight);
 	}
 

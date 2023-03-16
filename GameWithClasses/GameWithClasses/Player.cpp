@@ -9,7 +9,7 @@ constexpr int kStartingNumberLives = 3;
 
 // constructor
 Player::Player()
-	: PlaceableActor(0,0) // call the placeable Actor, and p[ass in coordinates with default color
+	: PlaceableActor(0,0) // call the placeable Actor, and pass in coordinates with default color
 	, m_pCurrentKey(nullptr) // set current key to null because we dont have a key
 	, m_money(0) // money set to 0
 	, m_lives(kStartingNumberLives)
@@ -17,6 +17,10 @@ Player::Player()
 
 }
 
+Player::~Player()
+{
+
+}
 
 // member functions
 bool Player::hasKey()
