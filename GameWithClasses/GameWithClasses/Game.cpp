@@ -2,13 +2,22 @@
 #include <iostream>
 #include <conio.h>
 #include <windows.h>
+#include "Enemy.h"
+#include "Key.h"
+#include "Door.h"
+#include "Goal.h"
+#include "Money.h"
+
 
 using namespace std;
 
 // color variables
-constexpr int kOpenDoorColor = 10;
-constexpr int kClosedDoorColor = 12;
-constexpr int kRegularColor = 7;
+constexpr int kArrowInput = 224;
+constexpr int kLeftArrow = 75;
+constexpr int kRightArrow = 77;
+constexpr int kUpArrow = 72;
+constexpr int kDownArrow = 80;
+constexpr int kEscapeKey = 27;
 
 // constructor
 Game::Game()
@@ -43,119 +52,174 @@ void Game::Unload() // useful for when we need to clear after the level.
 
 }
 
-bool Game::isGameOver()
+bool Game::IsGameOver()
 {
 	return m_isGameOver;
 }
 
 bool Game::Update()
 {
-    char input = (char)_getch();
+    int input = _getch(); // get input from user and store into variable
+    int arrowInput = 0;
+    int newPlayerX = m_player.GetXPosition(); // store player position into newPlayerX variable
+    int newPlayerY = m_player.GetYPosition(); // store player position into newPlayerY variable
 
-    // create 2 variables that will store the playerXY so we can see if the new position is over a space.
-    int newPlayerX = m_player.GetXPosition();
-    int newPlayerY = m_player.GetYPosition();
-    switch (input)
+    //One of the arrow keys were pressed
+    if (input == kArrowInput)
     {
-    case'w':
-    case'W':
-    {
-        newPlayerY--;
-        break;
-    }
-    case's':
-    case'S':
-    {
-        newPlayerY++;
-        break;
-    }
-    case'a':
-    case'A':
-    {
-        newPlayerX--;
-        break;
-    }
-    case'd':
-    case'D':
-    {
-        newPlayerX++;
-        break;
-    }
-    default:
-        break;
+        arrowInput = _getch();  // get which arrow is pressed
     }
 
- 
-    //check to see if the level of the index is equal to ' '
-    if (m_level.IsSpace(newPlayerX, newPlayerY))
+    if ((input == kArrowInput && arrowInput == kLeftArrow) ||
+        (char)input == 'A' || (char)input == 'a')
     {
-        m_player.SetPosition(newPlayerX, newPlayerY);
+        newPlayerX--;           // move player Left
+    }
+    else if ((input == kArrowInput && arrowInput == kRightArrow) ||
+        (char)input == 'D' || (char)input == 'd')
+    {
+        newPlayerX++;           // move player Right
+    }
+    else if ((input == kArrowInput && arrowInput == kUpArrow) ||
+        (char)input == 'W' || (char)input == 'w')
+    {
+        newPlayerY--;           // move player Up
+    }
+    else if ((input == kArrowInput && arrowInput == kDownArrow) ||
+        (char)input == 'S' || (char)input == 's')
+    {
+        newPlayerY--;           // move player Down
+    }
+    else if (input == kEscapeKey)
+    {
+        m_UserQuit = true;
+        return true; // user wants to quit
+    }
+    else if ((char)input == 'Z' || (char)input == 'z')
+    {
+        m_player.DropKey();
     }
 
-    else if (m_level.IsKey(newPlayerX, newPlayerY))
+    // If position never changes
+    if (newPlayerX == m_player.GetXPosition() && newPlayerY == m_player.GetYPosition())
     {
-        m_level.PickUpKey(newPlayerX, newPlayerY);
-        m_player.PickUpKey();
-                            m_level.IsSpace(newPlayerX, newPlayerY) == true;
-        m_player.SetPosition(newPlayerX, newPlayerY);
-        // Player pick up key sound.
-
+        return false;
     }
-    else if (m_level.IsDoor(newPlayerX, newPlayerY) && m_player.hasKey())
+    else
     {
-        m_level.OpenDoor(newPlayerX, newPlayerY);
-        m_player.UseKey();
-        m_player.SetPosition(newPlayerX, newPlayerY);
-        // play door open sound
+        return HandleCollision(newPlayerX, newPlayerY);
     }
-    else if (m_level.IsDoor(newPlayerX, newPlayerY) && !m_player.hasKey())
-    {
-       // PlayDoorClosedSound();
-    }
-    else if (m_level.IsGoal(newPlayerX, newPlayerY))
-    {
-        m_player.SetPosition(newPlayerX, newPlayerY);
-        return true; // meaing the game is Over
-    }
-    return false;
-
 }
 
-void Game::Draw()
+// function to handle collision
+// arguements are the new position X & Y that the player is moving to
+bool Game::HandleCollision(int newPlayerX, int newPlayerY)
 {
-    system("cls");
-    for (int y = 0; y < m_level.GetHeight(); y++)
-    {
-        for (int x = 0; x < m_level.GetWidth(); x++)
-        {
-            if (m_player.GetXPosition() == x && m_player.GetYPosition() == y)
-            {
-                m_player.Draw();
-            }
-            else
-            {
-                // enable us to bring the colors to the console
-                HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-                if (m_level.IsDoor(x, y))
-                {
-                    if (m_player.hasKey())
-                    {
-                        SetConsoleTextAttribute(console, kOpenDoorColor);
-                    }
-                    else
-                    {
-                        SetConsoleTextAttribute(console, kClosedDoorColor);
-                    }
-                }
-                else
-                {
-                    SetConsoleTextAttribute(console, kRegularColor);
-                }
+    // if a collission occurs, it will return to us the collidedActor
+    PlaceableActor* collidedActor = m_level.UpdateActors(newPlayerX, newPlayerY); 
 
-                m_level.Draw(x, y); // will draw with either 3 colors kRegularColor, kClosedDoorColor, kOpenDoorColor
+    if (collidedActor != nullptr && collidedActor->IsActive()) // check if we've collided with an actor, and if it is active
+    {
+        // if collidedActor is an Enemy, create pointer variable of Type Enemy to store
+        Enemy* collidedEnemy = dynamic_cast<Enemy*>(collidedActor);
+        if (collidedEnemy)
+        {
+            collidedEnemy->Remove();
+            m_player.SetPosition(newPlayerX, newPlayerY);
+
+            m_player.DecrementLives();
+            if (m_player.GetLives() < 0)
+            {
+                return true;
             }
         }
 
-        std::cout << endl;
+        // if collidedActor is Money, create pointer variable of Type Money to store
+        Money* collidedMoney = dynamic_cast<Money*>(collidedActor);
+        if (collidedMoney)
+        {
+            collidedMoney->Remove();
+            m_player.AddMoney(collidedMoney->GetWorth()); // add money to players worth
+            m_player.SetPosition(newPlayerX, newPlayerY);
+        }
+
+        // if collidedActor is Key, create pointer variable of Type Key to store
+        Key* collidedKey = dynamic_cast<Key*>(collidedKey);
+        if (collidedKey)
+        {
+            m_player.PickUpKey(collidedKey);
+            collidedKey->Remove();
+            m_player.SetPosition(newPlayerX, newPlayerY);
+            // Play KeyPickUpSound
+        }
+
+        Door* collidedDoor = dynamic_cast<Door*>(collidedActor);
+        if (collidedDoor)
+        {
+            if (!collidedDoor->IsOpen()) // if door is not open
+            {
+                if (m_player.hasKey(collidedDoor->GetColor())) // check to see if player has same key
+                {
+                    collidedDoor->Open();
+                    collidedDoor->Remove();
+                    m_player.UseKey();
+                    m_player.SetPosition(newPlayerX, newPlayerY);
+                    // Play door open sound
+                }
+                else
+                {
+                    // Play door Closed sound
+                }
+            }
+            else
+            {
+                m_player.SetPosition(newPlayerX, newPlayerY);
+            }
+        }
+
+        Goal* collidedGoal = dynamic_cast<Goal*>(collidedActor);
+        if (collidedGoal)
+        {
+            collidedGoal->Remove();
+            m_player.SetPosition(newPlayerX, newPlayerY);
+            return true; // meaning the player has won and the game has finished
+
+        }
+    } // end of collision with  actors
+    else if (m_level.IsSpace(newPlayerX, newPlayerY)) // no collision, or empty space
+    {
+        m_player.SetPosition(newPlayerX, newPlayerY); // then update player position to empty space
     }
+    else if (m_level.IsWall(newPlayerX, newPlayerY))
+    {
+        // do nothing because of wall in front of player. 
+    }
+
+    return false;
+}
+
+
+
+// function to draw
+void Game::Draw()
+{
+    // enable us to bring the colors to the console
+    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+    system("cls");
+    
+    m_level.Draw();
+
+    // Set Cursor to player position
+    COORD actorCursorPosition;
+    actorCursorPosition.X = m_player.GetXPosition();
+    actorCursorPosition.Y = m_player.GetYPosition();
+    SetConsoleCursorPosition(console, actorCursorPosition);
+    m_player.Draw();
+
+    // Set the sursor to the end of the level
+    COORD currentCursorPosition;
+    currentCursorPosition.X = 0;
+    currentCursorPosition.Y = m_level.GetHeight();
+    SetConsoleCursorPosition(console, currentCursorPosition);
+    
 }

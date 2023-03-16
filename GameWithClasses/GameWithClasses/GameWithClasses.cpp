@@ -11,7 +11,7 @@ int main()
     // load game
     if (myGame.Load())
     {
-        while (!myGame.isGameOver())
+        while (!myGame.IsGameOver())
         {
             myGame.Run();
         }
