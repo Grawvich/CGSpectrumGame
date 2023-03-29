@@ -10,6 +10,7 @@ public:
 	// Get & Set for money worth
 	int GetWorth() const { return m_worth; }
 
+	virtual ActorType GetType() override { return ActorType::Money; } // override function to getType
 	virtual void Draw() override;
 private:
 	int m_worth; // provide worth

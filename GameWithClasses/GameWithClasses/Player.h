@@ -11,7 +11,7 @@ public:
 
 	// member functions
 	bool hasKey();
-	bool hasKey(int color);
+	bool hasKey(ActorColor color);
 	void PickUpKey(Key* key);
 	void UseKey();
 	void DropKey();
@@ -23,6 +23,7 @@ public:
 	void DecrementLives() { m_lives--; }
 
 	virtual void Draw() override;
+	virtual ActorType GetType() override { return ActorType::Player; } // override function to getType
 
 private:
 	Key* m_pCurrentKey; // Aggregation because we can hold the key, AND it still exists

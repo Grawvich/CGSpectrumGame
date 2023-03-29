@@ -89,7 +89,7 @@ bool Level::Load(std::string levelName, int* playerX, int* playerY)
 void Level::Draw()
 {
     HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(console, kRegularColor); // set color to regular
+    SetConsoleTextAttribute(console, (int)ActorColor::RegularColor); // set color to regular
 
     // Draw the Level after getting width and height
     for (int y = 0; y < GetHeight(); ++y)
@@ -155,27 +155,27 @@ bool Level::Convert(int* playerX, int* playerY)
                 break;
             case 'r': // red key
                 m_pLevelData[index] = ' ';
-                m_pActors.push_back(new Key(x, y, kRedColor)); // adds the red key to our vector list
+                m_pActors.push_back(new Key(x, y, ActorColor::Red)); // adds the red key to our vector list
                 break;
             case 'g': // green key
                 m_pLevelData[index] = ' ';
-                m_pActors.push_back(new Key(x, y, kGreenColor)); // adds the green key to our vector list
+                m_pActors.push_back(new Key(x, y, ActorColor::Green)); // adds the green key to our vector list
                 break;
             case 'b': // blue key
                 m_pLevelData[index] = ' ';
-                m_pActors.push_back(new Key(x, y, kBlueColor)); // adds the blue key to our vector list
+                m_pActors.push_back(new Key(x, y, ActorColor::Blue)); // adds the blue key to our vector list
                 break;
             case 'R': // red Door
                 m_pLevelData[index] = ' ';
-                m_pActors.push_back(new Door(x, y, kRedColor, kRedColorSolid)); // adds red door to the vecotr
+                m_pActors.push_back(new Door(x, y, ActorColor::Red, ActorColor::SolidRed)); // adds red door to the vecotr
                 break;
             case 'G': // green Door
                 m_pLevelData[index] = ' ';
-                m_pActors.push_back(new Door(x, y, kGreenColor, kGreenColorSolid)); // adds green door to the vecotr
+                m_pActors.push_back(new Door(x, y, ActorColor::Green, ActorColor::SolidGreen)); // adds green door to the vecotr
                 break;
             case 'B': // Blue door
                 m_pLevelData[index] = ' ';
-                m_pActors.push_back(new Door(x, y, kBlueColor, kBlueColorSolid)); // adds blue door to the vecotr
+                m_pActors.push_back(new Door(x, y, ActorColor::Blue, ActorColor::SolidBlue)); // adds blue door to the vecotr
                 break;
             case 'X': // Blue door
                 m_pLevelData[index] = ' ';

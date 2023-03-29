@@ -4,14 +4,16 @@
 class Door : public PlaceableActor
 {
 public:
-	Door(int x, int y, int color, int closedColor);
+	Door(int x, int y, ActorColor color, ActorColor closedColor);
 	virtual void Draw() override;
+
+	virtual ActorType GetType() override { return ActorType::Door; }
 	// get & set door color
 	bool IsOpen() { return m_isOpen; }
 	void Open() { m_isOpen = true; }
 
 private:
 	bool m_isOpen;
-	int m_closedColor;
+	ActorColor m_closedColor;
 
 };

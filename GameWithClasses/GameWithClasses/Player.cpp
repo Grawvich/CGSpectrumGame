@@ -28,7 +28,7 @@ bool Player::hasKey()
 	return m_pCurrentKey != nullptr; // check to see if current key is set to null, will return true if we have a key
 }
 
-bool Player::hasKey(int color) // check to see if we have a key
+bool Player::hasKey(ActorColor color) // check to see if we have a key
 {
 	return hasKey() && m_pCurrentKey->GetColor() == color; // return color of the key
 }

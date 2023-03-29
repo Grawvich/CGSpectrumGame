@@ -1,8 +1,1 @@
-﻿  LevelEditorGenerator.cpp
-E:\project home\GitHub\CGSpectrumGame\GameWithClasses\LevelEditorGenerator\LevelEditorGenerator.cpp(16,34): warning C4309: 'initializing': truncation of constant value
-E:\project home\GitHub\CGSpectrumGame\GameWithClasses\LevelEditorGenerator\LevelEditorGenerator.cpp(17,34): warning C4309: 'initializing': truncation of constant value
-E:\project home\GitHub\CGSpectrumGame\GameWithClasses\LevelEditorGenerator\LevelEditorGenerator.cpp(18,37): warning C4309: 'initializing': truncation of constant value
-E:\project home\GitHub\CGSpectrumGame\GameWithClasses\LevelEditorGenerator\LevelEditorGenerator.cpp(19,36): warning C4309: 'initializing': truncation of constant value
-E:\project home\GitHub\CGSpectrumGame\GameWithClasses\LevelEditorGenerator\LevelEditorGenerator.cpp(20,36): warning C4309: 'initializing': truncation of constant value
-E:\project home\GitHub\CGSpectrumGame\GameWithClasses\LevelEditorGenerator\LevelEditorGenerator.cpp(21,34): warning C4309: 'initializing': truncation of constant value
-  LevelEditorGenerator.vcxproj -> E:\project home\GitHub\CGSpectrumGame\GameWithClasses\Debug\LevelEditorGenerator.exe
+﻿  LevelEditorGenerator.vcxproj -> C:\Users\breng\Desktop\Classwork\CGSpectrumGame\GameWithClasses\Debug\LevelEditorGenerator.exe

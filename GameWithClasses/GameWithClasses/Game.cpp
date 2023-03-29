@@ -2,6 +2,7 @@
 #include <iostream>
 #include <conio.h>
 #include <windows.h>
+#include <assert.h>
 #include "Enemy.h"
 #include "Key.h"
 #include "Door.h"
@@ -115,75 +116,101 @@ bool Game::Update()
 // arguements are the new position X & Y that the player is moving to
 bool Game::HandleCollision(int newPlayerX, int newPlayerY)
 {
+    // bool to trigger when game is done
+    bool isGameDone = false;
     // if a collission occurs, it will return to us the collidedActor
     PlaceableActor* collidedActor = m_level.UpdateActors(newPlayerX, newPlayerY); 
 
     if (collidedActor != nullptr && collidedActor->IsActive()) // check if we've collided with an actor, and if it is active
     {
-        // if collidedActor is an Enemy, create pointer variable of Type Enemy to store
-        Enemy* collidedEnemy = dynamic_cast<Enemy*>(collidedActor);
-        if (collidedEnemy)
+        switch (collidedActor->GetType())
         {
-            collidedEnemy->Remove();
-            m_player.SetPosition(newPlayerX, newPlayerY);
-
-            m_player.DecrementLives();
-            if (m_player.GetLives() < 0)
+        case ActorType::Enemy:
+        {
+            // if collidedActor is an Enemy, create pointer variable of Type Enemy to store
+            Enemy* collidedEnemy = dynamic_cast<Enemy*>(collidedActor);
+            assert(collidedEnemy); // trigger alarm if anything goes wrong 
+            if (collidedEnemy)
             {
-                return true;
-            }
-        }
+                collidedEnemy->Remove();
+                m_player.SetPosition(newPlayerX, newPlayerY);
 
-        // if collidedActor is Money, create pointer variable of Type Money to store
-        Money* collidedMoney = dynamic_cast<Money*>(collidedActor);
-        if (collidedMoney)
-        {
-            collidedMoney->Remove();
-            m_player.AddMoney(collidedMoney->GetWorth()); // add money to players worth
-            m_player.SetPosition(newPlayerX, newPlayerY);
-        }
-
-        // if collidedActor is Key, create pointer variable of Type Key to store
-        Key* collidedKey = dynamic_cast<Key*>(collidedActor);
-        if (collidedKey)
-        {
-            m_player.PickUpKey(collidedKey);
-            collidedKey->Remove();
-            m_player.SetPosition(newPlayerX, newPlayerY);
-            // Play KeyPickUpSound
-        }
-
-        Door* collidedDoor = dynamic_cast<Door*>(collidedActor);
-        if (collidedDoor)
-        {
-            if (!collidedDoor->IsOpen()) // if door is not open
-            {
-                if (m_player.hasKey(collidedDoor->GetColor())) // check to see if player has same key
+                m_player.DecrementLives();
+                if (m_player.GetLives() < 0)
                 {
-                    collidedDoor->Open();
-                    collidedDoor->Remove();
-                    m_player.UseKey();
-                    m_player.SetPosition(newPlayerX, newPlayerY);
-                    // Play door open sound
+                    isGameDone = true;
+                }
+            }
+            break;
+        }// end of enemy switch
+        case ActorType::Money:
+        {
+            // if collidedActor is Money, create pointer variable of Type Money to store
+            Money* collidedMoney = dynamic_cast<Money*>(collidedActor);
+            if (collidedMoney)
+            {
+                collidedMoney->Remove();
+                m_player.AddMoney(collidedMoney->GetWorth()); // add money to players worth
+                m_player.SetPosition(newPlayerX, newPlayerY);
+            }
+            break;
+        }// end of money switch
+        case ActorType::Key:
+        {
+            // if collidedActor is Key, create pointer variable of Type Key to store
+            Key* collidedKey = dynamic_cast<Key*>(collidedActor);
+            if (collidedKey)
+            {
+                m_player.PickUpKey(collidedKey);
+                collidedKey->Remove();
+                m_player.SetPosition(newPlayerX, newPlayerY);
+                // Play KeyPickUpSound
+            }
+
+            break;
+        }// end of Key switch
+        case ActorType::Door:
+        {
+            Door* collidedDoor = dynamic_cast<Door*>(collidedActor);
+            if (collidedDoor)
+            {
+                if (!collidedDoor->IsOpen()) // if door is not open
+                {
+                    if (m_player.hasKey(collidedDoor->GetColor())) // check to see if player has same key
+                    {
+                        collidedDoor->Open();
+                        collidedDoor->Remove();
+                        m_player.UseKey();
+                        m_player.SetPosition(newPlayerX, newPlayerY);
+                        // Play door open sound
+                    }
+                    else
+                    {
+                        // Play door Closed sound
+                    }
                 }
                 else
                 {
-                    // Play door Closed sound
+                    m_player.SetPosition(newPlayerX, newPlayerY);
                 }
             }
-            else
-            {
-                m_player.SetPosition(newPlayerX, newPlayerY);
-            }
-        }
-
-        Goal* collidedGoal = dynamic_cast<Goal*>(collidedActor);
-        if (collidedGoal)
+            break;
+        }// end of Door switch
+        case ActorType::Goal:
         {
-            collidedGoal->Remove();
-            m_player.SetPosition(newPlayerX, newPlayerY);
-            return true; // meaning the player has won and the game has finished
+            Goal* collidedGoal = dynamic_cast<Goal*>(collidedActor);
+            if (collidedGoal)
+            {
+                collidedGoal->Remove();
+                m_player.SetPosition(newPlayerX, newPlayerY);
+                isGameDone = true; // meaning the player has won and the game has finished
 
+            }
+            break;
+        }// end of goal switch
+
+        default:
+            break;
         }
     } // end of collision with  actors
 
@@ -196,7 +223,7 @@ bool Game::HandleCollision(int newPlayerX, int newPlayerY)
         // do nothing because of wall in front of player. 
     }
 
-    return false;
+    return isGameDone;
 }
 
 
