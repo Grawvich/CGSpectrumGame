@@ -156,6 +156,7 @@
     <ClInclude Include="Door.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameState.h" />
     <ClInclude Include="Goal.h" />
     <ClInclude Include="Key.h" />
     <ClInclude Include="Level.h" />

@@ -52,25 +52,112 @@ void DisplayRightBorder();
 bool EditLevel(char* pLevel, int& cursorX, int& cursorY, int width, int height);
 // function to SaveLevel
 void SaveLevel(char* pLevel, int width, int height);
+void RunEditor(char* pLevel, int width, int height);
 
 //display legend so its easier for the user
 void DisplayLegend();
 
 int main()
 {
+	char* pLevel = nullptr; // create char pointer variable and set to nullptr
 	int levelWidth;
 	int levelHeight;
+	bool doneEditing = false; // create boolean to trigger ifDoneEditing
 
-	GetLevelDimensions(levelWidth, levelHeight);
-	// allocate dynamic memory for the array
-	char* pLevel = new char[levelWidth * levelHeight];
-
-	// populate the array with spaces " "
-	for (int i = 0; i < levelWidth * levelHeight; i++)
+	// use boolean doneEditing to trigger save, edit, load while Loop
+	while (!doneEditing)
 	{
-		pLevel[i] = ' ';
-	}
+		system("cls");
+		cout << " Would you like to: " << endl;
+		cout << " 1) Load Level. " << endl;
+		cout << " 2) New Level. " << endl;
+		cout << " 3) Quit. " << endl;
+		// we could implemet a user check here to make sure they press the correct inputs
 
+		int input; // get user input
+		cin >> input;
+
+		if (input == 1)
+		{
+			// Load Level
+			cout << " Enter LevelName to Load: ";
+			string levelName; // get user input
+			cin >> levelName;
+
+			levelName.insert(0, "../"); // go up one folder to retrieve the level in windows explorer
+
+			ifstream levelFile; // input string reader
+			levelFile.open(levelName);
+
+			if (!levelFile) // check for if the file loaded
+			{
+				cout << " The file could not open." << endl;
+			}
+			else
+			{
+				constexpr int tempSize = 50; // temp size to help us read width and height
+				char temp[tempSize]; // create a temp array of tempSize
+
+				levelFile.getline(temp, tempSize, '\n'); // get integer value and store into tempSize array
+				levelWidth = atoi(temp); // convert to interger using atoi helper function
+
+				levelFile.getline(temp, tempSize, '\n'); // get integer value and store into tempSize array
+				levelHeight = atoi(temp); // convert to interger using atoi helper function
+
+				pLevel = new char[levelWidth * levelHeight]; // create new allocated memory in pLevel
+				levelFile.read(pLevel, levelWidth * levelHeight);
+				levelFile.close();
+
+				RunEditor(pLevel, levelWidth, levelHeight);
+
+				delete[] pLevel; // delete allocated memory
+				pLevel = nullptr; // set pointer variable to nullptr
+			}
+
+
+		} // end of input 1
+		else if (input == 2)
+		{
+			// New Level
+			GetLevelDimensions(levelWidth, levelHeight); // get level Dimensions from user, store in variables
+
+			//  pLevel is allocated dynamic memory above as local scope variables
+			pLevel = new char[levelWidth * levelHeight];
+			// populate the array with spaces " "
+			for (int i = 0; i < levelWidth * levelHeight; i++)
+			{
+				pLevel[i] = ' ';
+			}
+
+			RunEditor(pLevel, levelWidth, levelHeight); // Run Editor so the user can create
+
+
+			// de-allocate the memory of the array
+			delete[] pLevel;
+			pLevel = nullptr; // set pointer to null
+
+		}// end of input 2
+		else if (input == 3)
+		{
+			// Quit
+			cout << "Thank you for using LevelEditor 3000!! :) " << endl;
+			doneEditing = true;
+			//system("cls");
+
+		}// end of input 3
+		else
+		{
+			cout << " Invalid Input! Please Select 1, 2, or 3. " << endl;
+			doneEditing = false;
+			// invalid input, for the user verification, need it to fix a bug for when the user presses a char
+
+		}// end of input line
+	}
+}
+	
+
+void RunEditor(char* pLevel, int width, int height)
+{
 	// create local scope variables
 	int cursorX = 0;
 	int cursorY = 0;
@@ -81,20 +168,17 @@ int main()
 	{
 		system("cls"); // clear screen
 		// displaylevel to terminal
-		DisplayLevel(pLevel, levelWidth, levelHeight, cursorX, cursorY);
+		DisplayLevel(pLevel, width, height, cursorX, cursorY);
 		DisplayLegend();
-		doneEditing = EditLevel(pLevel, cursorX, cursorY, levelWidth, levelHeight);
+		doneEditing = EditLevel(pLevel, cursorX, cursorY, width, height);
 	}
 
 	system("cls");
-	DisplayLevel(pLevel, levelWidth, levelHeight, -1, -1); // a little trick to do wherethe player char isnt shown
+	DisplayLevel(pLevel, width, height, -1, -1); // a little trick to do wherethe player char isnt shown
 
 	// Call function to SaveLevel
-	SaveLevel(pLevel, levelWidth, levelHeight);
+	SaveLevel(pLevel, width, height);
 
-	// de-allocate the memory of the array
-	delete[] pLevel;
-	pLevel = nullptr;
 }
 
 
