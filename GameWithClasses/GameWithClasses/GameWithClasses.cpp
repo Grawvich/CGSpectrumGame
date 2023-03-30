@@ -3,6 +3,7 @@
 // CREATE a maze that the player can walk through and gather items, and reach a goal
 #include <iostream>
 #include "Game.h"
+#include "AudioManager.h"
 
 using namespace std;
 
@@ -25,12 +26,12 @@ int main()
         else if (myGame.GetPlayerLives() < 0)
         {
             cout << "You Lose!!" << endl;
-            // Play Lose sound
+            AudioManager::GetInstance()->PlayLoseSound();
         }
         else 
         {
             cout << "!!!!You Win!!!!" << endl;
-            // Play Lose sound
+            AudioManager::GetInstance()->PlayWinSound();
         }
     }
     else
@@ -38,6 +39,9 @@ int main()
         cout << "Game did not load, terminating now.";
     }
 
+    AudioManager::DestroyInstance(); // destroy AudioManager to prevent memory leaks
+
+    return 0; // return an integer
 }
 
 

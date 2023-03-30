@@ -1,12 +1,2 @@
-﻿  Door.cpp
-  Enemy.cpp
-  Game.cpp
-  GameWithClasses.cpp
-  Goal.cpp
-  Key.cpp
-  Level.cpp
-  Money.cpp
-  PlaceableActor.cpp
-  Player.cpp
-  Generating Code...
+﻿  Game.cpp
   GameWithClasses.vcxproj -> C:\Users\breng\Desktop\Classwork\CGSpectrumGame\GameWithClasses\Debug\GameWithClasses.exe

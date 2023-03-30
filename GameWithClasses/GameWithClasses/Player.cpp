@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Key.h"
+#include "AudioManager.h"
 #include <iostream>
 
 using namespace std;
@@ -50,6 +51,7 @@ void Player::DropKey()
 	{
 		m_pCurrentKey->Place(m_pPosition->x, m_pPosition->y); // drop key in position of the player
 		m_pCurrentKey = nullptr; // set current key to null, and key is active in the world position
+		AudioManager::GetInstance()->PlayKeyDropSound(); // play key drop sound
 	}
 }
 

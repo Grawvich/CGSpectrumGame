@@ -8,6 +8,7 @@
 #include "Door.h"
 #include "Goal.h"
 #include "Money.h"
+#include "AudioManager.h"
 
 
 using namespace std;
@@ -34,7 +35,7 @@ Game::~Game()
 
 bool Game::Load()
 {
-	return m_level.Load("Level2.txt", m_player.GetXPositionPointer(), m_player.GetYPositionPointer());
+	return m_level.Load("Level3.txt", m_player.GetXPositionPointer(), m_player.GetYPositionPointer());
 }
 
 void Game::Run()
@@ -130,6 +131,7 @@ bool Game::HandleCollision(int newPlayerX, int newPlayerY)
             // if collidedActor is an Enemy, create pointer variable of Type Enemy to store
             Enemy* collidedEnemy = dynamic_cast<Enemy*>(collidedActor);
             assert(collidedEnemy); // trigger alarm if anything goes wrong 
+            AudioManager::GetInstance()->PlayLoseLivesSound(); // Play LoseLivesSound
             if (collidedEnemy)
             {
                 collidedEnemy->Remove();
@@ -147,6 +149,7 @@ bool Game::HandleCollision(int newPlayerX, int newPlayerY)
         {
             // if collidedActor is Money, create pointer variable of Type Money to store
             Money* collidedMoney = dynamic_cast<Money*>(collidedActor);
+            AudioManager::GetInstance()->PlayKeyPickupSound(); // Play PickUpSound
             if (collidedMoney)
             {
                 collidedMoney->Remove();
@@ -159,12 +162,14 @@ bool Game::HandleCollision(int newPlayerX, int newPlayerY)
         {
             // if collidedActor is Key, create pointer variable of Type Key to store
             Key* collidedKey = dynamic_cast<Key*>(collidedActor);
+            AudioManager::GetInstance()->PlayKeyPickupSound();
             if (collidedKey)
             {
                 m_player.PickUpKey(collidedKey);
                 collidedKey->Remove();
+                AudioManager::GetInstance()->PlayKeyDropSound(); // Play KeyPickUpSound
                 m_player.SetPosition(newPlayerX, newPlayerY);
-                // Play KeyPickUpSound
+                
             }
 
             break;
@@ -181,8 +186,9 @@ bool Game::HandleCollision(int newPlayerX, int newPlayerY)
                         collidedDoor->Open();
                         collidedDoor->Remove();
                         m_player.UseKey();
+                        AudioManager::GetInstance()->PlayDoorOpenSound(); // Play door open sound
                         m_player.SetPosition(newPlayerX, newPlayerY);
-                        // Play door open sound
+                        
                     }
                     else
                     {
@@ -199,6 +205,7 @@ bool Game::HandleCollision(int newPlayerX, int newPlayerY)
         case ActorType::Goal:
         {
             Goal* collidedGoal = dynamic_cast<Goal*>(collidedActor);
+            AudioManager::GetInstance()->PlayWinSound(); // Play win sound
             if (collidedGoal)
             {
                 collidedGoal->Remove();
