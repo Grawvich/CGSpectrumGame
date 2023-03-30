@@ -1,31 +1,23 @@
 #pragma once
-#include "Player.h"
-#include "Level.h"
+#include "GameStateMachine.h"
 
 class Game
 {
-	Player m_player;
-	Level m_level;
-	bool m_isGameOver;
-	bool m_UserQuit;
+	GameStateMachine* m_pStateMachine;
 
 public:
 	Game();
-	~Game();
-
-	bool Load();
-	void Run();
-	void Unload();
 	
-	bool IsGameOver();
-	bool DidUserQuit() { return m_UserQuit; }
-	int GetPlayerLives() { return m_player.GetLives(); }
 
-
+	void Initialize(GameStateMachine* pStateMachine);
+	void RunGameLoop();
+	void Deinitialize();
+	
+	
 private:
 
-	bool Update();
+	bool Update(bool processInput = true);
 	void Draw();
 
-	bool HandleCollision(int newPlayerX, int newPlayerY);
+	
 };

@@ -9,7 +9,8 @@ public:
 
 	// establish gamestates
 	virtual void Enter() {} // virtual function gamestate Enter
-	virtual bool Update(bool processInput = true) {} // virtual function gamestate 
+	virtual bool Update(bool processInput = true) { return false; } // virtual function gamestate 
+	virtual void Draw() = 0; // pure virtual function gamestate 
 
 	virtual void Exit(){} // virtual function gamestate Exit
 };

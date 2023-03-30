@@ -147,7 +147,7 @@ int main()
 		}// end of input 3
 		else
 		{
-			cout << " Invalid Input! Please Select 1, 2, or 3. " << endl;
+			cout << " Invalid Input! Please Select 1, 2, or 3. " << endl; // "Invalid Entry. Terminating Program."  use if we dont add user verification
 			doneEditing = false;
 			// invalid input, for the user verification, need it to fix a bug for when the user presses a char
 
