@@ -15,7 +15,11 @@ public:
     {
         None,
         MainMenu,
-        Gameplay
+        Gameplay,
+        Settings,
+        HighScore,
+        Lose,
+        Win
     };
 
 private:

@@ -1,6 +1,8 @@
 #pragma once
 #include "GameState.h"
 
+// forward declare class to get access
+
 class StateMachineExampleGame;
 
 class MainMenuState :  public GameState

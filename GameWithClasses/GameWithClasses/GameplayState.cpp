@@ -33,7 +33,7 @@ GameplayState::GameplayState(StateMachineExampleGame* pOwner)
 
 bool GameplayState::Load()
 {
-	return m_level.Load("Level1.txt", m_player.GetXPositionPointer(), m_player.GetYPositionPointer());
+	return m_level.Load("Level3.txt", m_player.GetXPositionPointer(), m_player.GetYPositionPointer());
 }
 
 void GameplayState::Enter()
@@ -103,7 +103,7 @@ bool GameplayState::Update(bool processInput)
         if (m_skipFrameCount > kFramesToSkip) // we want the player to be drawn over the X spot and then have all the sounds play nd such
         {
             m_skipFrameCount = 0;
-            AudioManager::GetInstance()->PlayWinSound();
+            AudioManager::GetInstance()->PlayWinSound(); 
             m_pOwner->LoadScene(StateMachineExampleGame::SceneName::MainMenu);
         }
     }

@@ -7,8 +7,8 @@
 using namespace std;
 
 constexpr int kEscapeKey = 27;
-constexpr int kPlay = '1';
-constexpr int kQuit = '2';
+constexpr char kPlay = '1';
+constexpr char kQuit = '2';
 
 MainMenuState::MainMenuState(StateMachineExampleGame* pOwner)
 	: m_pOwner(pOwner)
@@ -39,9 +39,9 @@ void MainMenuState::Draw()
 {
 	system("cls");
 	cout << endl << endl << endl;
-	cout << "         - - - MAINE MENU - - - " << endl << endl;
-	cout << "          " <<  "1. Play " << endl;
-	cout << "          " <<  "2. Quit " << endl;
+	cout << "         - - - MAIN MENU - - - " << endl << endl;
+	cout << "          " << kPlay << ". Play " << endl; // "1. Play " << endl;
+	cout << "          " << kQuit << ". Quit " << endl;// "2. Quit " << endl;
 }
 
 

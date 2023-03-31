@@ -22,6 +22,7 @@ bool StateMachineExampleGame::UpdateCurrentState(bool processInput)
 {
 	//return based on what the currentState update method returns
 	bool done = false; // create bool and set it to false
+	
 	if (m_pNewState != nullptr)
 	{
 		ChangeState(m_pNewState);
