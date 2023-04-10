@@ -13,10 +13,10 @@
 using namespace std;
 
 // declare some characters from the ASCII extended table
-constexpr char WAL = (char)219;
-constexpr char KEY = (char)232;
-constexpr char DOR = (char)179;
-constexpr char END = (char)36;
+// constexpr char WAL = (char)219;
+// constexpr char KEY = (char)232;
+// constexpr char DOR = (char)179;
+// constexpr char END = (char)36;
 
 
 

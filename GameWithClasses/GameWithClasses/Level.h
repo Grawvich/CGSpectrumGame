@@ -28,6 +28,9 @@ public:
 	int GetHeight() { return m_height; }
 	int GetWidth() { return m_width; }
 
+	// declare constant public border for our HUD
+	static constexpr char WAL = (char)219;
+
 	// private functions
 private:
 	bool Convert(int* playerX, int* playerY);

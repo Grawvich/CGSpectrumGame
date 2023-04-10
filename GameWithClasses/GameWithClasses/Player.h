@@ -15,6 +15,7 @@ public:
 	void PickUpKey(Key* key);
 	void UseKey();
 	void DropKey();
+	Key* GetKey() { return m_pCurrentKey; }
 
 	void AddMoney(int money) { m_money += money; }
 	int GetMoney() { return m_money; }

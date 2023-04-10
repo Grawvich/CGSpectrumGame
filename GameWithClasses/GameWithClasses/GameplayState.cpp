@@ -1,6 +1,5 @@
 #include <iostream>
 #include <conio.h>
-#include <windows.h>
 #include <assert.h>
 
 #include "Enemy.h"
@@ -11,6 +10,7 @@
 #include "AudioManager.h"
 #include "GameplayState.h"
 #include "StateMachineExampleGame.h"
+#include "Utility.h"
 
 using namespace std;
 
@@ -24,16 +24,35 @@ constexpr int kEscapeKey = 27;
 
 GameplayState::GameplayState(StateMachineExampleGame* pOwner)
 	: m_pOwner(pOwner)
-	, m_Beatgame(false)
+	, m_beatLevel(false)
     , m_skipFrameCount(0)
+    , m_currentLevel(0)
+    , m_pLevel(nullptr)
 {
-
+    m_LevelNames.push_back("Level1.txt");
+    m_LevelNames.push_back("Level2.txt");
+    m_LevelNames.push_back("Level3.txt");
+    m_LevelNames.push_back("Level4.txt");
 }
+
+GameplayState::~GameplayState()
+{
+    delete m_pLevel;
+    m_pLevel = nullptr;
+}
+
 
 
 bool GameplayState::Load()
 {
-	return m_level.Load("Level4.txt", m_player.GetXPositionPointer(), m_player.GetYPositionPointer());
+    if (m_pLevel)
+    {
+        delete m_pLevel;
+        m_pLevel = nullptr;
+    }
+
+    m_pLevel = new Level();
+	return m_pLevel->Load(m_LevelNames.at(m_currentLevel), m_player.GetXPositionPointer(), m_player.GetYPositionPointer());
 }
 
 void GameplayState::Enter()
@@ -43,7 +62,7 @@ void GameplayState::Enter()
 
 bool GameplayState::Update(bool processInput)
 {
-    if (processInput && !m_Beatgame)
+    if (processInput && !m_beatLevel)
     {
         int input = _getch(); // get input from user and store into variable
         int arrowInput = 0;
@@ -96,15 +115,26 @@ bool GameplayState::Update(bool processInput)
         }
     }
 
-    if (m_Beatgame)
+    if (m_beatLevel)
     {
         // skip a couple frames so we can draw into the next scene
         ++m_skipFrameCount;
-        if (m_skipFrameCount > kFramesToSkip) // we want the player to be drawn over the X spot and then have all the sounds play nd such
+        if (m_skipFrameCount > kFramesToSkip) // skip a couple frames so the game updates
         {
+            m_beatLevel = false;
             m_skipFrameCount = 0;
-            AudioManager::GetInstance()->PlayWinSound(); 
-            m_pOwner->LoadScene(StateMachineExampleGame::SceneName::MainMenu);
+            
+            ++m_currentLevel;
+            if (m_currentLevel == m_LevelNames.size())
+            {
+                Utility::WriteHighScore(m_player.GetMoney());
+                AudioManager::GetInstance()->PlayWinSound();
+                m_pOwner->LoadScene(StateMachineExampleGame::SceneName::MainMenu);
+            }
+            else
+            {
+                Load();
+            }
         }
     }
     return false;
@@ -117,7 +147,7 @@ void GameplayState::HandleCollision(int newPlayerX, int newPlayerY)
     // bool to trigger when game is done
     bool isGameDone = false;
     // if a collission occurs, it will return to us the collidedActor
-    PlaceableActor* collidedActor = m_level.UpdateActors(newPlayerX, newPlayerY);
+    PlaceableActor* collidedActor = m_pLevel->UpdateActors(newPlayerX, newPlayerY);
 
     if (collidedActor != nullptr && collidedActor->IsActive()) // check if we've collided with an actor, and if it is active
     {
@@ -159,18 +189,18 @@ void GameplayState::HandleCollision(int newPlayerX, int newPlayerY)
         case ActorType::Key:
         {
             // if collidedActor is Key, create pointer variable of Type Key to store
-            Key* collidedKey = dynamic_cast<Key*>(collidedActor);
-            AudioManager::GetInstance()->PlayKeyPickupSound();
-            if (collidedKey)
-            {
-                m_player.PickUpKey(collidedKey);
-                collidedKey->Remove();
-                AudioManager::GetInstance()->PlayKeyDropSound(); // Play KeyPickUpSound
-                m_player.SetPosition(newPlayerX, newPlayerY);
+        Key* collidedKey = dynamic_cast<Key*>(collidedActor);
+        AudioManager::GetInstance()->PlayKeyPickupSound();
+        if (collidedKey)
+        {
+            m_player.PickUpKey(collidedKey);
+            collidedKey->Remove();
+            AudioManager::GetInstance()->PlayKeyDropSound(); // Play KeyPickUpSound
+            m_player.SetPosition(newPlayerX, newPlayerY);
 
-            }
+        }
 
-            break;
+        break;
         }// end of Key switch
         case ActorType::Door:
         {
@@ -208,7 +238,7 @@ void GameplayState::HandleCollision(int newPlayerX, int newPlayerY)
             {
                 collidedGoal->Remove();
                 m_player.SetPosition(newPlayerX, newPlayerY);
-                m_Beatgame = true; // meaning the player has won and the game has finished
+                m_beatLevel = true; // meaning the player has won and the game has finished
 
             }
             break;
@@ -219,13 +249,13 @@ void GameplayState::HandleCollision(int newPlayerX, int newPlayerY)
         }
     } // end of collision with  actors
 
-    else if (m_level.IsSpace(newPlayerX, newPlayerY)) // no collision, or empty space
+    else if (m_pLevel->IsSpace(newPlayerX, newPlayerY)) // no collision, or empty space
     {
-        m_player.SetPosition(newPlayerX, newPlayerY); // then update player position to empty space
+    m_player.SetPosition(newPlayerX, newPlayerY); // then update player position to empty space
     }
-    else if (m_level.IsWall(newPlayerX, newPlayerY))
+    else if (m_pLevel->IsWall(newPlayerX, newPlayerY))
     {
-        // do nothing because of wall in front of player. 
+    // do nothing because of wall in front of player. 
     }
 }
 
@@ -236,7 +266,7 @@ void GameplayState::Draw()
     HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
     system("cls");
 
-    m_level.Draw();
+    m_pLevel->Draw();
 
     // Set Cursor to player position
     COORD actorCursorPosition;
@@ -248,8 +278,56 @@ void GameplayState::Draw()
     // Set the sursor to the end of the level
     COORD currentCursorPosition;
     currentCursorPosition.X = 0;
-    currentCursorPosition.Y = m_level.GetHeight();
+    currentCursorPosition.Y = m_pLevel->GetHeight();
     SetConsoleCursorPosition(console, currentCursorPosition);
 
+    DrawHUD(console);
 }
 
+void GameplayState::DrawHUD(const HANDLE& console)
+{
+    cout << endl;
+
+    // top border
+    for(int i = 0; i < m_pLevel->GetWidth(); ++i)
+    {
+        cout << Level::WAL;
+    }
+
+    //Left Border
+    cout << Level::WAL;
+
+    cout << endl;
+
+    cout << " wasd-Move " << Level::WAL << "z-Drop Key " << Level::WAL;
+    cout << " $: " << m_player.GetMoney() << " " << Level::WAL;
+    cout << " Lives: " << m_player.GetLives() << " " << Level::WAL;
+    cout << " Key: ";
+    if (m_player.hasKey())
+    {
+        m_player.GetKey()->Draw();
+    }
+    else
+    {
+        cout << " ";
+    }
+
+    //Right Border
+    CONSOLE_SCREEN_BUFFER_INFO csbi; // determine where the Y location is for the right border
+    GetConsoleScreenBufferInfo(console, &csbi);
+
+    COORD pos;
+    pos.X = m_pLevel->GetWidth() - 1;
+    pos.Y = csbi.dwCursorPosition.Y;
+    SetConsoleCursorPosition(console, pos);
+
+    cout << Level::WAL;
+    cout << endl;
+
+    // Bottom Border
+    for (int i = 0; i < m_pLevel->GetWidth(); ++i)
+    {
+        cout << Level::WAL;
+    }
+
+}
