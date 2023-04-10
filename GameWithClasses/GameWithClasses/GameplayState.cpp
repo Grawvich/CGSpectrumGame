@@ -33,7 +33,7 @@ GameplayState::GameplayState(StateMachineExampleGame* pOwner)
 
 bool GameplayState::Load()
 {
-	return m_level.Load("Level3.txt", m_player.GetXPositionPointer(), m_player.GetYPositionPointer());
+	return m_level.Load("Level4.txt", m_player.GetXPositionPointer(), m_player.GetYPositionPointer());
 }
 
 void GameplayState::Enter()

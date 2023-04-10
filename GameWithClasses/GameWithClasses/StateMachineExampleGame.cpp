@@ -2,6 +2,8 @@
 #include "Game.h"
 #include "MainMenuState.h"
 #include "GameplayState.h"
+#include "HighScoreState.h"
+#include "SettingsState.h"
 
 StateMachineExampleGame::StateMachineExampleGame(Game* pOwner)
 	: m_pOwner(pOwner)
@@ -75,6 +77,12 @@ void StateMachineExampleGame::LoadScene(SceneName scene)
 		break;
 	case SceneName::Gameplay:
 		m_pNewState = new GameplayState(this);
+		break;
+	case SceneName::HighScore:
+		m_pNewState = new HighScoreState(this);
+		break;
+	case SceneName::Settings:
+		m_pNewState = new SettingsState(this);
 		break;
 	default:
 		break;

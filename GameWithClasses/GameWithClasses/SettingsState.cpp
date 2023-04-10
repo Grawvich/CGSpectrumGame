@@ -8,8 +8,8 @@
 using namespace std;
 
 constexpr int kEscapeKey = 27;
-constexpr int kSound = '1';
-constexpr int kMainMenu = '2';
+constexpr char kSound = '1';
+constexpr char kMainMenu = '2';
 
 SettingsState::SettingsState(StateMachineExampleGame* pOwner)
 	: m_pOwner(pOwner)
@@ -41,12 +41,16 @@ void SettingsState::Draw()
 {
 	system("cls");
 	cout << endl << endl << endl;
-	cout << "         - - - MAINE MENU - - - " << endl << endl;
-	cout << "          " << kSound << ". Toggle Sound " << endl;
+	cout << "         - - - SETTINGS - - - " << endl << endl;
+	cout << "          " << kSound << ". Toggle Sound ";
 	if (AudioManager::GetInstance()->IsSoundOn())
 	{
-		cout << "ON" << endl;
-		cout << "OFF" << endl;
+		cout << "          " << "ON" << endl;
+		
+	}
+	else
+	{
+		cout << "          " << "OFF" << endl;
 	}
 	cout << "          " << "2. Back to Main Menu " << endl;
 }
